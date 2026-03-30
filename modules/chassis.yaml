@@ -1,0 +1,167 @@
+include: [mcan_basic_module]
+
+hardware:
+  name: chassis_module
+  vendor: konar
+  unique_id: 0x0000000000000010 # this will be 64-bit unique identifier fpr the series of the same module
+  hw_revision: 1
+  fw_revision: 1
+  date: 2026-03-22
+  description: "Chassis module for basic chassis control and monitoring"
+  inherit: [mcan_basic_module]
+  power_requirements:
+    voltage: 20V #idk
+    current: 2A
+
+custom_types:
+  chassis_state:
+    type: enum
+    readable_name: "Chassis State Value"
+    description: "Possible states of the chassis"
+    values:
+      0: "IDLE"
+      1: "CHANGE_POSITION"
+      2: "ZERO_POSITION"
+      3: "ERROR"
+
+  chassis_status:
+    type: enum
+    readable_name: "Chassis Status"
+    description: "Possible statuses of the chassis"
+    values:
+      0: "OK"
+      1: "FAILED"
+  
+  led_mode:
+    type: enum
+    readable_name: "LED Mode"
+    description: "Possible modes for the chassis LEDs"
+    values:
+      0: "OFF"
+      1: "ON"
+      2: "BLINK"
+
+messages:
+  commands:
+    set_position:
+      readable_name: "Target Position"
+      description: "Command to set the target position of the chassis"
+      var_type: float
+      units: "degrees"
+
+    set_control_mode:
+      readable_name: "Control Mode"
+      description: "Command to set the control mode of the chassis"
+      var_type: chassis_state
+      default: chassis_state::IDLE
+
+    set_led_mode:
+      readable_name: "LED Mode"
+      description: "Command to set the LED mode of the chassis"
+      var_type: led_mode
+      default: led_mode::OFF
+  
+  states:
+    current_position:
+      name: "Current Position"
+      description: "Current position of the chassis"
+      var_type: float
+      units: "degrees"
+      permission: r
+
+    current_status:
+      name: "Chassis Status"
+      description: "Current status of the chassis"
+      var_type: chassis_status
+      default: chassis_status::OK
+      permission: r
+
+    current_led:
+      name: "Current LED Mode"
+      description: "Current LED mode of the chassis"
+      var_type: led_mode
+      default: led_mode::OFF
+      permission: r
+  
+  #position PID 
+  configs:
+    PID_position_Kp:
+      name: "Position PID Kp"
+      description: "Proportional gain for the position PID controller"
+      var_type: float
+      default: 1.0
+      permission: rw
+    
+    PID_position_Ki:
+      name: "Position PID Ki"
+      description: "Integral gain for the position PID controller"
+      var_type: float
+      default: 0.0
+      permission: rw
+
+    PID_position_Kd:
+      name: "Position PID Kd"
+      description: "Derivative gain for the position PID controller"
+      var_type: float
+      default: 0.1
+      permission: rw
+
+    PID_position_Feedforward:
+      name: "Position PID Feedforward"
+      description: "Feedforward term for the position PID controller"
+      var_type: float
+      default: 0.0
+      permission: rw
+
+    PID_position_max_Ki:
+      name: "Position PID Max Ki"
+      description: "Maximum integral term for the position PID controller to prevent windup"
+      var_type: float
+      permission: rw
+
+    PID_position_max_output:
+      name: "Position PID Max Output"
+      description: "Maximum output for the position PID controller"
+      var_type: float
+      permission: rw
+
+    #velocity PID
+    PID_velocity_Kp:
+      name: "Velocity PID Kp"
+      description: "Proportional gain for the velocity PID controller"
+      var_type: float
+      default: 1.0
+      permission: rw
+
+    PID_velocity_Ki:
+      name: "Velocity PID Ki"
+      description: "Integral gain for the velocity PID controller"
+      var_type: float
+      default: 0.0
+      permission: rw
+
+    PID_velocity_Kd:
+      name: "Velocity PID Kd"
+      description: "Derivative gain for the velocity PID controller"
+      var_type: float
+      default: 0.1
+      permission: rw
+
+    PID_velocity_Feedforward:
+      name: "Velocity PID Feedforward"
+      description: "Feedforward term for the velocity PID controller"
+      var_type: float
+      default: 0.0
+      permission: rw
+
+    PID_velocity_max_Ki:
+      name: "Velocity PID Max Ki"
+      description: "Maximum integral term for the velocity PID controller to prevent windup"
+      var_type: float
+      permission: rw
+    
+    PID_velocity_max_output:
+      name: "Velocity PID Max Output"
+      description: "Maximum output for the velocity PID controller"
+      var_type: float
+      permission: rw
